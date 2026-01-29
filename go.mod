@@ -1,4 +1,4 @@
-module fishing
+module go-fishing
 
 go 1.25.6
 

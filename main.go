@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 
+	"go-fishing/collision"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	//"github.com/hajimehoshi/ebiten/v2/text"
@@ -13,23 +15,34 @@ import (
 
 type Game struct{}
 
+const (
+	gameScreenSize int = 512
+	gameWindowSize int = 720
+)
+
 var (
 	bg           *ebiten.Image
 	rollSpeed    int = 97
 	bgTranslateY int = 0
+
+	bgLength int = 5120
+
+	hookMaxLength int = -bgLength + gameScreenSize
+	hookCurrentLength int = -gameScreenSize + 100
+	hookSpeed int = 5
 )
 
 // Gameloop
 func (g *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyS){
-		if bgTranslateY > (-5120 + 512) {
-		bgTranslateY -= 10
+		if bgTranslateY > (hookCurrentLength) {
+		bgTranslateY -= hookSpeed
 		}
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyW){
 		if bgTranslateY != (0) {
-		bgTranslateY += 10
+		bgTranslateY += hookSpeed
 		}
 	}
 
@@ -55,14 +68,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 512, 512
+	return gameScreenSize, gameScreenSize
 }
 
 func main() {
-	ebiten.SetWindowSize(720, 720)
+	ebiten.SetWindowSize(gameWindowSize, gameWindowSize)
 	ebiten.SetWindowTitle("Go Fishing")
 	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
+	collision.Test()
 
 }
