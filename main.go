@@ -1,7 +1,12 @@
+// TODO
+// Implement fish movement
+// fish spawner randomly
+// fish catch mechanic: tap left/right (A/D) to counteract fish pull, do it -
+// quick to avoid it getting to the threshold, which causes to fail.
+
 package main
 
 import (
-	//"image/color"
 	"log"
 	"strconv"
 
@@ -9,8 +14,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	//"github.com/hajimehoshi/ebiten/v2/text"
-	//"golang.org/x/image/font"
 )
 
 type Game struct{}
@@ -22,14 +25,20 @@ const (
 
 var (
 	bg           *ebiten.Image
+	muskie 		 *ebiten.Image
 	rollSpeed    int = 97
 	bgTranslateY int = 0
 
 	bgLength int = 5120
 
+	Ylayer int = 0
+
 	hookMaxLength int = -bgLength + gameScreenSize
 	hookCurrentLength int = -gameScreenSize + 100
 	hookSpeed int = 5
+
+	muskiePositionX int = 200
+	muskiePositionY int = 400
 )
 
 // Gameloop
@@ -46,6 +55,8 @@ func (g *Game) Update() error {
 		}
 	}
 
+	
+
 	return nil
 }
 
@@ -55,14 +66,22 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	
+	muskie, _, err = ebitenutil.NewImageFromFile("assets/fishes/muskie.png")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Render to screen
 func (g *Game) Draw(screen *ebiten.Image) {
 	bgop := &ebiten.DrawImageOptions{}
+	muskieop := &ebiten.DrawImageOptions{}
 	bgop.GeoM.Translate(0, float64(bgTranslateY))
+	muskieop.GeoM.Translate(float64(muskiePositionX), float64(bgTranslateY + muskiePositionY))
 	screen.DrawImage(bg, bgop)
-	//text.Draw(screen, "100 METERS", font.StretchCondensed, 50, 100, color.White)
+	screen.DrawImage(muskie, muskieop)
+
 
 	ebitenutil.DebugPrint(screen, strconv.Itoa((bgTranslateY * -1) / 8))
 }
@@ -78,5 +97,4 @@ func main() {
 		log.Fatal(err)
 	}
 	collision.Test()
-
 }

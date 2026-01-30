@@ -1,0 +1,6 @@
+package navigation
+
+func NavigateToHook() {
+
+}
+
